@@ -1,4 +1,0 @@
-http://www.micro4you.com/files/sensor/DHT11.pdf		[datasheet for DHT11 Temperature and Humidity Sensor]
-https://www.youtube.com/watch?v=Rppuxjc_Rzc		[tutorial for DHT11 sensor, skip to 2:40 for usefulness]
-https://www.adafruit.com/				[tutorials and information]
-https://learn.adafruit.com/dht/overview?view=all	[DHT11 overview

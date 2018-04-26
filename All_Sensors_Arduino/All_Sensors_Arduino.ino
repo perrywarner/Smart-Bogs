@@ -1,5 +1,5 @@
-#include <Time.h>
-#include <TimeLib.h> //https://github.com/PaulStoffregen/Time
+//#include <Time.h>
+#include "TimeLib.h" //https://github.com/PaulStoffregen/Time
 
 //
 //   FILE:  dht11_test1.pde
@@ -8,10 +8,11 @@
 #include "dht11.h"
 #include <SD.h>
 #include "Wire.h"
-#include <Time.h>
-#include <BH1750FVI.h>
-#include <DallasTemperature.h> // For Ds18b20, Stolen from https://create.arduino.cc/projecthub/TheGadgetBoy/ds18b20-digital-temperature-sensor-and-arduino-9cc806
-#include <OneWire.h> // Also for Ds18b20 DATE: 1/19/18
+//#include "Time.h"
+#include "BH1750FVI.h"
+#include "DallasTemperature.h" // For Ds18b20, Stolen from https://create.arduino.cc/projecthub/TheGadgetBoy/ds18b20-digital-temperature-sensor-and-arduino-9cc806
+// Brackets vs quotes, Quotes is same dir, Brackets is lib dir
+#include "OneWire.h" // Also for Ds18b20 DATE: 1/19/18
 
 BH1750FVI LightSensor;
 
@@ -164,6 +165,7 @@ void loop() {
   {
     // if the file didn't open, print an error:
     Serial.println(F("error opening test.txt"));
+    delay(1000);
     return;
   }
   
