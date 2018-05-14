@@ -34,6 +34,11 @@ File myFile;
 // End SD Card
 
 //Celsius to Fahrenheit conversion
+
+// Constants:
+const String dew_point_message = "Dew Point (°F): ";
+
+
 double Fahrenheit(double celsius)
 {
   return 1.8 * celsius + 32;
@@ -219,13 +224,12 @@ void loop() {
   String months = String(month(t));
   String years = String(year(t));
 
- 
-  myFile.print("hour:");
-  myFile.print(hours);
+  myFile.print("second:  ");
+  myFile.print(seconds);
   myFile.print("  minute:");
   myFile.print(minutes);
-  myFile.print("  second:");
-  myFile.print(seconds);
+  myFile.print("  hour:");
+  myFile.print(hours);
   myFile.print("  day:");
   myFile.print(days);
   myFile.print("  month:");
@@ -259,9 +263,10 @@ void loop() {
   myFile.println("Dew Point (°C): ");
   myFile.println(dewPoint(DHT11.temperature, DHT11.humidity));
 
-  Serial.print("Dew PointFast (°C): ");
+
+  Serial.print(dew_point_message);
   Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
-  myFile.println("Dew PointFast (°C): ");
+  myFile.println(dew_point_message);
   myFile.println(dewPointFast(DHT11.temperature, DHT11.humidity));
 
   Serial.println();
