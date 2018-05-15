@@ -25,6 +25,8 @@
 // DHTLIB_OK
 // DHTLIB_ERROR_CHECKSUM
 // DHTLIB_ERROR_TIMEOUT
+
+
 int dht11::read(int pin)
 {
 	// BUFFER TO RECEIVE
@@ -32,8 +34,11 @@ int dht11::read(int pin)
 	uint8_t cnt = 7;
 	uint8_t idx = 0;
 
+
 	// EMPTY BUFFER
-	for (int i=0; i< 5; i++) bits[i] = 0;
+	for (int i = 0; i < 5; i++) {
+		bits[i] = 0;
+	}
 
 	// REQUEST SAMPLE
 	pinMode(pin, OUTPUT);

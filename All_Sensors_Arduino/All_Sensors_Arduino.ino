@@ -14,6 +14,8 @@
 // Brackets vs quotes, Quotes is same dir, Brackets is lib dir
 #include "OneWire.h" // Also for Ds18b20 DATE: 1/19/18
 
+#include "SmartBogsHelper.h" //Our helper functions for this project
+
 BH1750FVI LightSensor;
 
 // Data wire is plugged into pin 2 on the Arduino 
