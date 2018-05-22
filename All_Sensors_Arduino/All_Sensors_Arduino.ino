@@ -1,3 +1,8 @@
+#define DHT11PIN 3
+
+// Data wire is plugged into pin 2 on the Arduino 
+#define ONE_WIRE_BUS 2 
+
 //#include <Time.h>
 #include "TimeLib.h" //https://github.com/PaulStoffregen/Time
 
@@ -16,8 +21,6 @@
 
 BH1750FVI LightSensor;
 
-// Data wire is plugged into pin 2 on the Arduino 
-#define ONE_WIRE_BUS 2 
 
 // Setup a oneWire instance to communicate with any OneWire devices  
 // (not just Maxim/Dallas temperature ICs) 
@@ -32,6 +35,8 @@ File myFile;
 // so you have to close this one before opening another.
 
 // End SD Card
+
+dht11 DHT11;
 
 //Celsius to Fahrenheit conversion
 
@@ -91,9 +96,238 @@ double dewPointFast(double celsius, double humidity)
   return Td;
 }
 
-dht11 DHT11;
+void printTimeData(File myFile){
 
-#define DHT11PIN 3
+  //Using DateTime library from https://github.com/PaulStoffregen/Time 
+  //Need to import this external library to Arduino and use TimeLib.h
+  
+  time_t t = now(); // Store the current time in time variable t
+  
+  String hours = String(hour(t));
+  String minutes = String(minute(t));
+  String seconds = String(second(t));
+  String days = String(day(t));
+  String months = String(month(t));
+  String years = String(year(t));
+
+  myFile.print("second:  ");
+  myFile.print(seconds);
+  myFile.print("  minute:");
+  myFile.print(minutes);
+  myFile.print("  hour:");
+  myFile.print(hours);
+  myFile.print("  day:");
+  myFile.print(days);
+  myFile.print("  month:");
+  myFile.print(months);
+  myFile.print("  year:");
+  myFile.print(years);
+  myFile.println();
+
+  Serial.print("second:  ");
+  Serial.print(seconds);
+  Serial.print("  minute:");
+  Serial.print(minutes);
+  Serial.print("  hour:");
+  Serial.print(hours);
+  Serial.print("  day:");
+  Serial.print(days);
+  Serial.print("  month:");
+  Serial.print(months);
+  Serial.print("  year:");
+  Serial.print(years);
+  Serial.println();
+  
+}
+
+int checkDHTStatus(int chk){
+
+  switch (chk)
+  {
+    case DHTLIB_OK:
+      Serial.println();
+      break;
+    case DHTLIB_ERROR_CHECKSUM:
+      Serial.println("Checksum error");
+      break;
+    case DHTLIB_ERROR_TIMEOUT:
+      Serial.println("Time out error");
+      break;
+    default:
+      Serial.println("Unknown error");
+      break;
+  }
+}  
+
+void printHumidityData(dht11 DHT11, File myFile){
+
+  Serial.print("Humidity (%): ");
+  Serial.println((float)DHT11.humidity, 2);
+  myFile.println("\nHumidity (%): ");
+  myFile.println((float)DHT11.humidity, 2);
+  
+}
+
+void printAirTemperatureData(dht11 DHT11, File myFile, String units_desired){
+
+  int celcius_index = units_desired.indexOf("celcius");
+  int fahrenheit_index = units_desired.indexOf("fahrenheit");
+  int kelvin_index = units_desired.indexOf("kelvin");
+
+  if (celcius_index){
+
+     Serial.print("Temperature (°C): ");
+     Serial.println((float)DHT11.temperature, 2);
+     myFile.println("Temperature (°C): ");
+     myFile.println((float)DHT11.temperature, 2);
+     
+  }
+
+  else if (fahrenheit_index){
+
+     Serial.print("Temperature (°F): ");
+     Serial.println(Fahrenheit(DHT11.temperature), 2);
+     myFile.println("Temperature (°F): ");
+     myFile.println(Fahrenheit(DHT11.temperature), 2);
+     
+  }
+
+  else if (kelvin_index){
+
+     Serial.print("Temperature (°K): ");
+     Serial.println(Kelvin(DHT11.temperature), 2);
+     myFile.println("Temperature (°K): ");
+     myFile.println(Kelvin(DHT11.temperature), 2);
+     
+  }
+
+  else if (celcius_index && fahrenheit_index){
+
+     Serial.print("Temperature (°C): ");
+     Serial.println((float)DHT11.temperature, 2);
+     myFile.println("Temperature (°C): ");
+     myFile.println((float)DHT11.temperature, 2);
+     
+     Serial.print("Temperature (°F): ");
+     Serial.println(Fahrenheit(DHT11.temperature), 2);
+     myFile.println("Temperature (°F): ");
+     myFile.println(Fahrenheit(DHT11.temperature), 2);
+     
+  }
+
+  else if (celcius_index && kelvin_index){
+    
+     Serial.print("Temperature (°C): ");
+     Serial.println((float)DHT11.temperature, 2);
+     myFile.println("Temperature (°C): ");
+     myFile.println((float)DHT11.temperature, 2);
+     
+     Serial.print("Temperature (°K): ");
+     Serial.println(Kelvin(DHT11.temperature), 2);
+     myFile.println("Temperature (°K): ");
+     myFile.println(Kelvin(DHT11.temperature), 2);
+     
+  }
+
+  else if (fahrenheit_index && kelvin_index){
+    
+     Serial.print("Temperature (°F): ");
+     Serial.println(Fahrenheit(DHT11.temperature), 2);
+     myFile.println("Temperature (°F): ");
+     myFile.println(Fahrenheit(DHT11.temperature), 2);
+     
+     Serial.print("Temperature (°K): ");
+     Serial.println(Kelvin(DHT11.temperature), 2);
+     myFile.println("Temperature (°K): ");
+     myFile.println(Kelvin(DHT11.temperature), 2);
+     
+  }
+
+  else if (celcius_index && kelvin_index && fahrenheit_index){
+    
+     Serial.print("Temperature (°C): ");
+     Serial.println((float)DHT11.temperature, 2);
+     myFile.println("Temperature (°C): ");
+     myFile.println((float)DHT11.temperature, 2);
+          
+     Serial.print("Temperature (°K): ");
+     Serial.println(Kelvin(DHT11.temperature), 2);
+     myFile.println("Temperature (°K): ");
+     myFile.println(Kelvin(DHT11.temperature), 2);
+         
+     Serial.print("Temperature (°F): ");
+     Serial.println(Fahrenheit(DHT11.temperature), 2);
+     myFile.println("Temperature (°F): ");
+     myFile.println(Fahrenheit(DHT11.temperature), 2);
+     
+  }
+
+  else {
+
+     Serial.println("Please select one or more of: celcius , fahrenheit, kelvin");
+     myFile.println("Please select one or more of: celcius , fahrenheit, kelvin");
+    
+  }
+    
+}
+
+void printDewPointData(dht11 DHT11, File myFile){
+
+  Serial.print("Dew Point (°C): ");
+  Serial.println(dewPoint(DHT11.temperature, DHT11.humidity));
+  myFile.println("Dew Point (°C): ");
+  myFile.println(dewPoint(DHT11.temperature, DHT11.humidity));
+
+
+  Serial.print(dew_point_message);
+  Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
+  myFile.println(dew_point_message);
+  myFile.println(dewPointFast(DHT11.temperature, DHT11.humidity));
+  
+}
+
+int fileErrorCheck(File myFile){
+
+  // if the file opened okay, write to it:
+  if (myFile)
+  {
+    Serial.print(F("File opened for writing."));
+    return 0;
+  }
+  else
+  {
+    // if the file didn't open, print an error:
+    Serial.println(F("error opening test.txt"));
+    delay(1000);
+    return -1;
+  }
+
+}
+
+void printWaterTemperatureData(File myFile){
+
+  Serial.println();
+  myFile.println();
+  Serial.print("Ds18B20 water temperature reading:");
+  myFile.print("Ds18B20 water temperature reading:");
+  sensors.requestTemperatures(); // Send the command to get temperature readings 
+  Serial.print(sensors.getTempCByIndex(0));
+  myFile.print(sensors.getTempCByIndex(0));
+  
+}
+
+void printLightData(uint16_t lux, File myFile){
+
+  Serial.print("Light: ");
+  myFile.println("Light: ");
+  Serial.print(lux);
+  myFile.print(lux);
+  Serial.print(" lux");
+  myFile.print(" lux");
+  Serial.println();
+  myFile.println();
+  
+}
 
 void setup() {   // put your setup code here, to run once:
   
@@ -151,138 +385,41 @@ void setup() {   // put your setup code here, to run once:
   Serial.println("Running...");
 }
 
-
 void loop() {
-  // put your main code here, to run repeatedly:
-  Serial.println("\n");  
-  uint16_t lux = LightSensor.GetLightIntensity();// Get Lux value
-  int chk = DHT11.read(DHT11PIN);
- 
 
+  Serial.println("\n");
+
+  // Initialize / reinitialize local sensor and SD variables.
+  dht11 DHT11;
+  int chk = DHT11.read(DHT11PIN);
+  uint16_t lux = LightSensor.GetLightIntensity(); // Get Lux value
+  
   myFile = SD.open("test.txt", FILE_WRITE);
 
-  // if the file opened okay, write to it:
-  if (myFile)
-  {
-    //Serial.print(F("File opened for writing."));
-  }
-  else
-  {
-    // if the file didn't open, print an error:
-    Serial.println(F("error opening test.txt"));
-    delay(1000);
-    return;
-  }
-  
-  Serial.print("Light: ");
-  myFile.println("Light: ");
-  Serial.print(lux);
-  myFile.print(lux);
-  Serial.print(" lux");
-  myFile.print(" lux");
-  myFile.println();
-  myFile.println();
-
-  switch (chk)
-  {
-    case DHTLIB_OK:
-      Serial.println();
-      break;
-    case DHTLIB_ERROR_CHECKSUM:
-      Serial.println("Checksum error");
-      break;
-    case DHTLIB_ERROR_TIMEOUT:
-      Serial.println("Time out error");
-      break;
-    default:
-      Serial.println("Unknown error");
-      break;
+  if (fileErrorCheck(myFile) == -1){
+     return;
   }
 
+  checkDHTStatus(chk);
 
+  printTimeData(myFile);
 
-  //Using DateTime library from https://github.com/PaulStoffregen/Time 
-  //Need to import this external library to Arduino and use TimeLib.h
-  
-  time_t t = now(); // Store the current time in time
-  // variable t
-  hour(t); // Returns the hour for the given
-  // time t
-  minute(t); // Returns the minute for the given
-  // time t
-  second(t); // Returns the second for the given
-  // time t
-  day(t); // The day for the given time t
-  month(t); // The month for the given time t
+  printLightData(lux, myFile);
 
-  year(t); // The year for the given time t
-  
-  String hours = String(hour(t));
-  String minutes = String(minute(t));
-  String seconds = String(second(t));
-  String days = String(day(t));
-  String months = String(month(t));
-  String years = String(year(t));
+  printHumidityData(DHT11, myFile);
 
-  myFile.print("second:  ");
-  myFile.print(seconds);
-  myFile.print("  minute:");
-  myFile.print(minutes);
-  myFile.print("  hour:");
-  myFile.print(hours);
-  myFile.print("  day:");
-  myFile.print(days);
-  myFile.print("  month:");
-  myFile.print(months);
-  myFile.print("  year:");
-  myFile.print(years);
-  myFile.println();
+  String units_desired = "celcius"; // modify to change the data being written to myFile and Serial
 
-  Serial.print("Humidity (%): ");
-  Serial.println((float)DHT11.humidity, 2);
-  myFile.println("\nHumidity (%): ");
-  myFile.println((float)DHT11.humidity, 2);
+  printAirTemperatureData(DHT11, myFile, units_desired);
 
-  Serial.print("Temperature (°C): ");
-  Serial.println((float)DHT11.temperature, 2);
-  myFile.println("Temperature (°C): ");
-  myFile.println((float)DHT11.temperature, 2);
+  printDewPointData(DHT11, myFile);
 
-  Serial.print("Temperature (°F): ");
-  Serial.println(Fahrenheit(DHT11.temperature), 2);
-  myFile.println("Temperature (°F): ");
-  myFile.println(Fahrenheit(DHT11.temperature), 2);
+  printWaterTemperatureData(myFile);
 
-  Serial.print("Temperature (°K): ");
-  Serial.println(Kelvin(DHT11.temperature), 2);
-  myFile.println("Temperature (°K): ");
-  myFile.println(Kelvin(DHT11.temperature), 2);
-
-  Serial.print("Dew Point (°C): ");
-  Serial.println(dewPoint(DHT11.temperature, DHT11.humidity));
-  myFile.println("Dew Point (°C): ");
-  myFile.println(dewPoint(DHT11.temperature, DHT11.humidity));
-
-
-  Serial.print(dew_point_message);
-  Serial.println(dewPointFast(DHT11.temperature, DHT11.humidity));
-  myFile.println(dew_point_message);
-  myFile.println(dewPointFast(DHT11.temperature, DHT11.humidity));
-
-  Serial.println();
-  myFile.println();
-  Serial.print("Ds18B20 water temperature reading:");
-  myFile.print("Ds18B20 water temperature reading:");
-  sensors.requestTemperatures(); // Send the command to get temperature readings 
-  Serial.print(sensors.getTempCByIndex(0));
-  myFile.print(sensors.getTempCByIndex(0));
-
-  myFile.println();
-  myFile.println();
-  myFile.println();
-  myFile.println();
+  myFile.println("/n /n /n");
 
   delay(2000);
 
   myFile.close();
+  
 }
